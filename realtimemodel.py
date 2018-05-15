@@ -168,7 +168,13 @@ in_sym = motor_voltage
 print q_sym+u_sym
 
 KM = KanesMethod(N, q_ind=q_sym, u_ind=u_sym, kd_eqs=kdes)
-KM.kanes_equations(bodies, forces)
+
+# Per https://github.com/sympy/sympy/issues/10945
+try:
+    (fr, frstar) = KM.kanes_equations(bodies=bodies, loads=forces)
+except TypeError:
+    (fr, frstar) = KM.kanes_equations(forces, bodies)
+
 kdd = KM.kindiffdict()
 mm = KM.mass_matrix_full.xreplace(kdd)
 fo = KM.forcing_full.xreplace(kdd)
@@ -210,7 +216,11 @@ def extractSubexpressions(inexprs, prefix='X', threshold=1, prev_subx=[]):
     outexprs = [x.as_mutable() if type(x) is ImmutableDenseMatrix else x for x in outexprs]
 
     return tuple(outexprs+[subexprs])
+
 mm, fo, subx = extractSubexpressions([mm, fo], 'subx')
+
+if not os.path.exists('output'):
+    os.makedirs('output')
 
 with open('output/derivation.srepr', 'wb') as f:
     f.truncate()
