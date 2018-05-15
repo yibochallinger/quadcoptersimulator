@@ -5,6 +5,7 @@
 using namespace std;
 
 static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_thrust, double& ret_torque) {
+
     //cout << v_z << " " << v2 << endl;
     double rad = 3.0/4.0 * blade_length;
     //local blade element setting angle

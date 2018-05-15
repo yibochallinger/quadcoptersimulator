@@ -1,7 +1,7 @@
 constants = {
-	'g':9.8, #m/s^2
+	'g':0., #m/s^2
 	#'k':1,  #thrust coefficient
-	'Km':.1, #motor constant
+	'Km':.024, #motor constant
 	'R':.2, #ohm
 	'k_theta':51.8, #stiffness
 

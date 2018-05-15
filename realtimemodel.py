@@ -132,6 +132,8 @@ blade_masscenter = []
 blade_body = []
 force_center = []
 blade_tip = []
+blade_v_z = []
+blade_v_2 = []
 blade_thrust = []
 blade_torque = []
 for i in range(4):
@@ -146,21 +148,22 @@ for i in range(4):
         force_center[2*i+j].v2pt_theory(blade_masscenter[-1], N, blade_frame[-1])
         blade_tip.append(motor_masscenter[i].locatenew('blade_tip[%u]' % (2*i+j,), blade_length*blade_frame[2*i+j].y))
         blade_tip[2*i+j].v2pt_theory(blade_masscenter[-1], N, blade_frame[-1])
-        blade_v_z = force_center[i].vel(N).to_matrix(blade_frame[i])[2]
-        blade_v_2 = force_center[i].vel(N).to_matrix(blade_frame[i])[0]
-        blade_thrust.append(Function('get_blade_thrust')(blade_v_z, blade_v_2))
-        blade_torque.append(Function('get_blade_torque')(blade_v_z, blade_v_2))
+        blade_v_z.append(force_center[i].vel(N).to_matrix(blade_frame[i])[2])
+        blade_v_2.append(force_center[i].vel(N).to_matrix(blade_frame[i])[0])
+        blade_thrust.append(Function('get_blade_thrust')(blade_v_z[-1], blade_v_2[-1]))
+        blade_torque.append(Function('get_blade_torque')(blade_v_z[-1], blade_v_2[-1]))
 
-        forces.append((force_center[2*i+j], -direction[i]*blade_thrust[-1]*blade_frame[2*i+j].z))  #thrust on blades
+        forces.append((force_center[2*i+j], -blade_thrust[-1]*blade_frame[2*i+j].z))  #thrust on blades
         forces.append((blade_frame[2*i+j], direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #blade stiffness torque
         forces.append((motor_frame[i], -direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #reaction torque of blade stiffness
         forces.append((blade_frame[2*i+j], direction[i]*blade_torque[-1]*blade_frame[2*i+j].z)) #torque on blades
         forces.append((blade_masscenter[2*i+j], blade_mass*gravity))
         bodies.append(blade_body[2*i+j])
         kdes.append(blade_omega[2*i+j]-blade_theta_dot[2*i+j])
+
 q_sym = quat+pos+motor_theta+blade_theta
 u_sym = omega+vel+motor_omega+blade_omega
-in_sym = [motor_voltage]
+in_sym = motor_voltage
 
 print q_sym+u_sym
 
@@ -211,6 +214,6 @@ mm, fo, subx = extractSubexpressions([mm, fo], 'subx')
 
 with open('output/derivation.srepr', 'wb') as f:
     f.truncate()
-    f.write(srepr({'mm':mm, 'fo':fo, 'subx':subx, 'inputs':in_sym, 'states':q_sym+u_sym, 'constants':constants}))
+    f.write(srepr({'mm':mm, 'fo':fo, 'subx':subx, 'inputs':in_sym, 'states':q_sym+u_sym, 'constants':constants, 'blade_v_z':Matrix(blade_v_z).xreplace(kdd), 'blade_v_2':Matrix(blade_v_2).xreplace(kdd)}))
     print('wrote output/derivation.srepr')
 

@@ -53,6 +53,9 @@ with open('output/quadcoptereqns.h', 'wb') as f:
     f.write(generate_eigen_matrix_func_proto('get_mm', derivation['subx'], derivation['mm'], [('states',derivation['states']), ('inputs',derivation['inputs'])]))
     f.write('\n')
     f.write(generate_eigen_matrix_func_proto('get_fo', derivation['subx'], derivation['fo'], [('states',derivation['states']), ('inputs',derivation['inputs'])]))
+    f.write('\n')
+    f.write(generate_eigen_matrix_func_proto('get_blade_v_z', [], derivation['blade_v_z'], [('states',derivation['states']), ('inputs',derivation['inputs'])]))
+    f.write(generate_eigen_matrix_func_proto('get_blade_v_2', [], derivation['blade_v_2'], [('states',derivation['states']), ('inputs',derivation['inputs'])]))
 
 with open('output/quadcoptereqns.cpp', 'wb') as f:
     f.truncate()
@@ -61,3 +64,6 @@ with open('output/quadcoptereqns.cpp', 'wb') as f:
     f.write(generate_eigen_matrix_func('get_mm', derivation['subx'], derivation['mm'], [('states',derivation['states']), ('inputs',derivation['inputs'])]))
     f.write('\n\n')
     f.write(generate_eigen_matrix_func('get_fo', derivation['subx'], derivation['fo'], [('states',derivation['states']), ('inputs',derivation['inputs'])]))
+    f.write('\n\n')        
+    f.write(generate_eigen_matrix_func('get_blade_v_z', [], derivation['blade_v_z'], [('states',derivation['states']), ('inputs',derivation['inputs'])]))
+    f.write(generate_eigen_matrix_func('get_blade_v_2', [], derivation['blade_v_2'], [('states',derivation['states']), ('inputs',derivation['inputs'])]))
