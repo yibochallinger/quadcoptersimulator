@@ -39,8 +39,8 @@ static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_th
             break;
         }
     }
-    ret_thrust = DtDr*blade_length;
-    ret_torque = DqDr*blade_length;
+    ret_thrust = 0;//DtDr*blade_length;
+    ret_torque = 0;//DqDr*blade_length;
 
     //cout << ret_thrust << " " << ret_torque << endl << endl;
 }

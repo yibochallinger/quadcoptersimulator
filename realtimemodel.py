@@ -115,8 +115,8 @@ for i in range (4):
     motor_masscenter.append(body_masscenter.locatenew('motor_masscenter[%u]' % (i,), body_arm*motorloc[i]))
     motor_masscenter[i].v2pt_theory(body_masscenter, N, body_frame)
     motor_body.append(RigidBody('motor_body[%u]' % (i,), motor_masscenter[i], motor_frame[i], motor_mass, (motor_inertia[i], motor_masscenter[i])))
-    forces.append((motor_frame[i], direction[i]*(motor_voltage[i]/Km/R+Km*motor_omega[i])*motor_frame[i].z))  #motor torque
-    forces.append((body_frame, -direction[i]*(motor_voltage[i]/Km/R+Km*motor_omega[i])*motor_frame[i].z))  #body reaction 
+    forces.append((motor_frame[i], direction[i]*(motor_voltage[i]-Km*motor_omega[i])*Km/R*motor_frame[i].z))  #motor torque
+    forces.append((body_frame, -direction[i]*(motor_voltage[i]-Km*motor_omega[i])*Km/R*motor_frame[i].z))  #body reaction
     forces.append((motor_masscenter[i], motor_mass*gravity))
     bodies.append(motor_body[i])
     kdes.append(motor_omega[i]-motor_theta_dot[i])
@@ -140,11 +140,11 @@ for i in range(4):
     for j in range(2):
         blade_frame.append(motor_frame[i].orientnew('blade_frame[%u]' % (2*i+j,), 'Body', [pi*j, 0, -direction[i]*blade_theta[2*i+j]], '321'))
         blade_inertia.append(inertia(blade_frame[2*i+j], 0.000091, 7e-7, 0.000091))
-        blade_masscenter.append(motor_masscenter[i].locatenew('blade_masscenter[%u]' % (2*i+j,), direction[i]*blade_length/2.0*blade_frame[2*i+j].y))
+        blade_masscenter.append(motor_masscenter[i].locatenew('blade_masscenter[%u]' % (2*i+j,), -direction[i]*blade_length/2.0*blade_frame[2*i+j].y))
         blade_masscenter[2*i+j].v2pt_theory(motor_masscenter[i], N, blade_frame[2*i+j])
         #print (blade_masscenter[2*i+j].pos_from(motor_masscenter[i]).to_matrix(motor_frame[i]))
         blade_body.append(RigidBody('blade_body[%u]' % (2*i+j,), blade_masscenter[2*i+j], blade_frame[2*i+j], blade_mass, (blade_inertia[2*i+j], blade_masscenter[2*i+j])))
-        force_center.append(motor_masscenter[i].locatenew('force_center[%u]' % (2*i+j,), direction[i]*3.0/4.0*blade_length*blade_frame[2*i+j].y))
+        force_center.append(motor_masscenter[i].locatenew('force_center[%u]' % (2*i+j,), -direction[i]*3.0/4.0*blade_length*blade_frame[2*i+j].y))
         force_center[2*i+j].v2pt_theory(blade_masscenter[-1], N, blade_frame[-1])
         blade_tip.append(motor_masscenter[i].locatenew('blade_tip[%u]' % (2*i+j,), blade_length*blade_frame[2*i+j].y))
         blade_tip[2*i+j].v2pt_theory(blade_masscenter[-1], N, blade_frame[-1])
@@ -153,13 +153,15 @@ for i in range(4):
         blade_thrust.append(Function('get_blade_thrust')(blade_v_z[-1], blade_v_2[-1]))
         blade_torque.append(Function('get_blade_torque')(blade_v_z[-1], blade_v_2[-1]))
 
-        forces.append((force_center[2*i+j], -direction[i]*blade_thrust[-1]*blade_frame[2*i+j].z))  #thrust on blades
+        forces.append((force_center[2*i+j], -blade_thrust[-1]*blade_frame[2*i+j].z))  #thrust on blades
         forces.append((blade_frame[2*i+j], direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #blade stiffness torque
         forces.append((motor_frame[i], -direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #reaction torque of blade stiffness
         forces.append((blade_frame[2*i+j], direction[i]*blade_torque[-1]*blade_frame[2*i+j].z)) #torque on blades
         forces.append((blade_masscenter[2*i+j], blade_mass*gravity))
         bodies.append(blade_body[2*i+j])
         kdes.append(blade_omega[2*i+j]-blade_theta_dot[2*i+j])
+
+        print blade_frame[-1].z.to_matrix(body_frame)[2]
 
 q_sym = quat+pos+motor_theta+blade_theta
 u_sym = omega+vel+motor_omega+blade_omega
@@ -219,6 +221,7 @@ def extractSubexpressions(inexprs, prefix='X', threshold=1, prev_subx=[]):
 
 mm, fo, subx = extractSubexpressions([mm, fo], 'subx')
 
+import os
 if not os.path.exists('output'):
     os.makedirs('output')
 
