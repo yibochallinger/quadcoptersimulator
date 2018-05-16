@@ -153,7 +153,7 @@ for i in range(4):
         blade_thrust.append(Function('get_blade_thrust')(blade_v_z[-1], blade_v_2[-1]))
         blade_torque.append(Function('get_blade_torque')(blade_v_z[-1], blade_v_2[-1]))
 
-        forces.append((force_center[2*i+j], -blade_thrust[-1]*blade_frame[2*i+j].z))  #thrust on blades
+        forces.append((force_center[2*i+j], -direction[i]*blade_thrust[-1]*blade_frame[2*i+j].z))  #thrust on blades
         forces.append((blade_frame[2*i+j], direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #blade stiffness torque
         forces.append((motor_frame[i], -direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #reaction torque of blade stiffness
         forces.append((blade_frame[2*i+j], direction[i]*blade_torque[-1]*blade_frame[2*i+j].z)) #torque on blades
