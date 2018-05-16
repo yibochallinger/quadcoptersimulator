@@ -20,6 +20,7 @@ static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_th
         //axial velocity
         double v0 = v_z*(1+a);
         double phi = atan2(v0,v2);
+//         cout << phi << endl;
         double alpha =  theta-phi;
         double cl = 6.2*alpha;
         double cd = .008-.003*cl+.01*pow(cl,2);
@@ -40,19 +41,19 @@ static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_th
         }
     }
     ret_thrust = 0;//DtDr*blade_length;
-    ret_torque = 0;//DqDr*blade_length;
+    ret_torque = DqDr*blade_length;
 
     //cout << ret_thrust << " " << ret_torque << endl << endl;
 }
 
 static inline double get_blade_thrust(double v_z, double v2) {
     double thrust, torque;
-    get_blade_thrust_torque(v_z, v2, thrust, torque);
+    get_blade_thrust_torque(-v_z, v2, thrust, torque);
     return thrust;
 }
 
 static inline double get_blade_torque(double v_z, double v2) {
     double thrust, torque;
-    get_blade_thrust_torque(v_z, v2, thrust, torque);
+    get_blade_thrust_torque(-v_z, v2, thrust, torque);
     return torque;
 }

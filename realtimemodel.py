@@ -138,7 +138,7 @@ blade_thrust = []
 blade_torque = []
 for i in range(4):
     for j in range(2):
-        blade_frame.append(motor_frame[i].orientnew('blade_frame[%u]' % (2*i+j,), 'Body', [pi*j, 0, -direction[i]*blade_theta[2*i+j]], '321'))
+        blade_frame.append(motor_frame[i].orientnew('blade_frame[%u]' % (2*i+j,), 'Body', [pi*j, 0, direction[i]*blade_theta[2*i+j]], '321'))
         blade_inertia.append(inertia(blade_frame[2*i+j], 0.000091, 7e-7, 0.000091))
         blade_masscenter.append(motor_masscenter[i].locatenew('blade_masscenter[%u]' % (2*i+j,), -direction[i]*blade_length/2.0*blade_frame[2*i+j].y))
         blade_masscenter[2*i+j].v2pt_theory(motor_masscenter[i], N, blade_frame[2*i+j])
@@ -154,8 +154,8 @@ for i in range(4):
         blade_torque.append(Function('get_blade_torque')(blade_v_z[-1], blade_v_2[-1]))
 
         forces.append((force_center[2*i+j], -blade_thrust[-1]*blade_frame[2*i+j].z))  #thrust on blades
-        forces.append((blade_frame[2*i+j], direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #blade stiffness torque
-        forces.append((motor_frame[i], -direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #reaction torque of blade stiffness
+        forces.append((blade_frame[2*i+j], -direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #blade stiffness torque
+        forces.append((motor_frame[i], direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #reaction torque of blade stiffness
         forces.append((blade_frame[2*i+j], direction[i]*blade_torque[-1]*blade_frame[2*i+j].z)) #torque on blades
         forces.append((blade_masscenter[2*i+j], blade_mass*gravity))
         bodies.append(blade_body[2*i+j])

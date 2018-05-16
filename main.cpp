@@ -24,10 +24,10 @@ int main() {
     states << 0, 0, 0, 1, // quat 0 1 2 3
               0, 0, 0, // pos 4 5 6
               0, 0, 0, 0, // motor angle 7 8 9 10
-              0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, //blade angle 11 12 13 14 15 16 17 18
+              0, 0, 0, 0, 0, 0, 0, 0, //blade angle 11 12 13 14 15 16 17 18
               0, 0, 0, // ang vel 19 20 21
               0, 0, 0.001, // vel 22 23 24
-              0, 0, 0, 0, //motor ang vel 25 26 27 28
+              -600, -600, -600, -600, //motor ang vel 25 26 27 28
               0, 0, 0, 0, 0, 0, 0, 0; // blade ang vel 29 30 31 32 33 34 35 36
 
     inputs << 0, 
@@ -37,11 +37,17 @@ int main() {
 
     double t = 0;
     ofstream datafile("data.txt");
-    for (int a=0; a<10; a++) {
+
+    cout << get_blade_torque(0.001,761.843) << endl;
+    cout << get_blade_torque(-0.5,100) << endl;
+
+    for (int a=0; a<0; a++) {
         Matrix<double,37,1> xdot;
         for (int i=0; i<100; i++) {
-            double dt = 0.001;
+            double dt = 0.0001;
             t += dt;
+
+            xdot = compute_xdot(states,inputs);
 
             Matrix<double,37,1> k1 = dt * compute_xdot(states,inputs);
             Matrix<double,37,1> k2 = dt * compute_xdot(states+k1/2,inputs);
@@ -64,14 +70,14 @@ int main() {
             states(3,0) /= norm;
         }
 
-//         cout << "xdot:" << endl << xdot << endl << endl;
+        cout << "xdot:" << endl << xdot << endl << endl;
 
 
         Matrix<double, 8,1> blade_v_z = get_blade_v_z(states, inputs);
         Matrix<double, 8,1> blade_v_2 = get_blade_v_2(states, inputs);
 
-//         cout << "blade_v_2" << endl << blade_v_2 << endl << endl;
-//         cout << "blade_v_z" << endl << blade_v_z << endl << endl;
+        cout << "blade_v_2" << endl << blade_v_2 << endl << endl;
+        cout << "blade_v_z" << endl << blade_v_z << endl << endl;
         Matrix<double, 8,1> blade_thrust;
         Matrix<double, 8,1> blade_torque;
         for (int j=0; j<8; j++) {
@@ -79,7 +85,7 @@ int main() {
             blade_torque(j,0) = get_blade_torque(blade_v_z(j,0), blade_v_2(j,0));
         }
 
-//          cout << "blade_thrust" << endl << blade_thrust  << endl << endl << "blade_torque" << endl << blade_torque << endl << endl;
+         cout << "blade_thrust" << endl << blade_thrust  << endl << endl << "blade_torque" << endl << blade_torque << endl << endl;
 
         double qr = states(0,0);
         double qi = states(1,0);
