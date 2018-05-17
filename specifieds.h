@@ -26,10 +26,16 @@ static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_th
         double cd = .008-.003*cl+.01*pow(cl,2);
         //local velocity at blade
         double vlocal = sqrt(pow(v0,2)+pow(v2,2));
+        if (alpha >0){
+            double angle = phi;
+        }
+        else{
+            double angle = M_PI - phi;
+        }
         //thrust grading per bladeś
-        DtDr = 0.5*rho*pow(vlocal,2)*chord*(cl*cos(phi)-cd*sin(phi));
+        DtDr = 0.5*rho*pow(vlocal,2)*chord*(cl*cos(angle)-cd*sin(angle));
         //torque grading per blade
-        DqDr = 0.5*rho*pow(vlocal,2)*chord*rad*(cd*cos(phi)+cl*sin(phi));
+        DqDr = 0.5*rho*pow(vlocal,2)*chord*rad*(cd*cos(angle)+cl*sin(angle));
         //momentum check on inflow and swirl factors
         double tem1 = DtDr/(4.0*M_PI*rad*rho*pow(v_z,2)*(1+a));
         double anew = 0.5*(a+tem1);

@@ -18,11 +18,14 @@ blade_tip_viz_frame=[]
 blade_center=[]
 blade_viz_frame=[]
 
+arm_angles = [-pi/4, 3*pi/4, 1*pi/4, 5*pi/4]
+
 for i in range(4):
 	motor_viz_frame.append(VisualizationFrame(N, motor_masscenter[i], motor_shape))
 	arm_center.append(Point('a_c[%u]' % (i,)))
 	arm_center[i].set_pos(body_masscenter, body_arm / 2. * motorloc[i])
-	arm_viz_frame.append(VisualizationFrame('arm[%u]' % (i,), body_frame.orientnew('arm%u'%(i,), 'Axis', [i*pi/2,body_frame.z]), arm_center[i], arm_shape))
+	#arm_viz_frame.append(VisualizationFrame('arm[%u]' % (i,), body_frame, arm_center[i], arm_shape))
+	arm_viz_frame.append(VisualizationFrame('arm[%u]' % (i,), body_frame.orientnew('arm%u'%(i,), 'Axis', [arm_angles[i],body_frame.z]), arm_center[i], arm_shape))
 for i in range(4):
 	for j in range(2):
 		blade_tip_viz_frame.append(VisualizationFrame(N, blade_tip[2*i+j], blade_tip_shape))
