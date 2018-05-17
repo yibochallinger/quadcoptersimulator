@@ -18,9 +18,11 @@ def thrust_and_torque(v_z, v2): #motor_omega, v_z, disk plane velocity
 	while(finished is False):
 		#axial velocity
 		v0 = v_z*(1+a)
-		phi = math.atan2(v0,abs(v2))  
-
-		alpha =  theta-phi
+		phi = math.atan2(abs(v0),abs(v2))  
+		if (v_z>0):
+			alpha = theta-phi
+		if (v_z<0):
+			alpha = theta+phi
 		cl = 6.2*alpha
 		cd = .008-.003*cl+.01*cl**2
 		#local velocity at blade

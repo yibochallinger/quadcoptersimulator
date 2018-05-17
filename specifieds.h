@@ -19,9 +19,9 @@ static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_th
     while(true){
         //axial velocity
         double v0 = v_z*(1+a);
-        double phi = atan2(v0,fabs(v2));
+        double phi = atan2(fabs(v0),fabs(v2));
 //         cout << phi << endl;
-        double alpha =  theta-phi;
+        double alpha =  v0 > 0 ? theta-phi: theta+phi;
         double cl = 6.2*alpha;
         double cd = .008-.003*cl+.01*pow(cl,2);
         //local velocity at blade
@@ -42,9 +42,9 @@ static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_th
         }
         a = anew;
     }
-    angle = alpha > 0 ? phi : M_PI-pi;
-    ret_thrust = v2 > M_PI/2 ? -DtDr*blade_length: DtDr*blade_length;//DtDr*blade_length;
-    ret_torque = v2 > M_PI/2 ? -DtDr*blade_length: DtDr*blade_length;
+
+    ret_thrust = v2 > 0 ? DtDr*blade_length: -DtDr*blade_length;//DtDr*blade_length;
+    ret_torque = v2 > 0 ? DqDr*blade_length: -DqDr*blade_length;
 
     //cout << ret_thrust << " " << ret_torque << endl << endl;
 }
