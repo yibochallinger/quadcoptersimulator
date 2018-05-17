@@ -41,6 +41,7 @@ def thrust_and_torque(v_z, v2): #motor_omega, v_z, disk plane velocity
 		if(abs(anew-a)<1.0e-5):
 			finished = True
 		a = anew
+
 		total =+1
 		#check to see if iteration stuck
 		if (total>500):
@@ -53,8 +54,8 @@ def thrust_and_torque(v_z, v2): #motor_omega, v_z, disk plane velocity
 		torque = -DqDr*blade_length
 	return (thrust,torque)
 
-print thrust_and_torque(1,1)
-print thrust_and_torque(1,-1)
+print thrust_and_torque(0.001,100)
+print thrust_and_torque(-0.001,100)
 
 
 				
