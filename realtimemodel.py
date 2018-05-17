@@ -6,6 +6,7 @@ import numpy as np
 from scipy.integrate import odeint
 import math
 from constant import *
+import os
 
 def square_inertia_xx_yy(m, l, z):
     return 1./12. * m*(l**2+z**2)

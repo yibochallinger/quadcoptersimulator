@@ -19,35 +19,32 @@ static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_th
     while(true){
         //axial velocity
         double v0 = v_z*(1+a);
-        double phi = atan2(v0,v2);
+        double phi = atan2(v0,fabs(v2));
 //         cout << phi << endl;
         double alpha =  theta-phi;
         double cl = 6.2*alpha;
         double cd = .008-.003*cl+.01*pow(cl,2);
         //local velocity at blade
         double vlocal = sqrt(pow(v0,2)+pow(v2,2));
-        if (alpha >0){
-            double angle = phi;
-        }
-        else{
-            double angle = M_PI - phi;
-        }
+
         //thrust grading per bladeś
-        DtDr = 0.5*rho*pow(vlocal,2)*chord*(cl*cos(angle)-cd*sin(angle));
+        DtDr = 0.5*rho*pow(vlocal,2)*chord*(cl*cos(phi)-cd*sin(phi));
         //torque grading per blade
-        DqDr = 0.5*rho*pow(vlocal,2)*chord*rad*(cd*cos(angle)+cl*sin(angle));
+        DqDr = 0.5*rho*pow(vlocal,2)*chord*rad*(cd*cos(phi)+cl*sin(phi));
         //momentum check on inflow and swirl factors
         double tem1 = DtDr/(4.0*M_PI*rad*rho*pow(v_z,2)*(1+a));
         double anew = 0.5*(a+tem1);
-        a = anew;
+        
         total = total+1;
         //check to see if iteration stuck or convergence
         if (total>500 || abs(anew-a)<1.0e-5) {
             break;
         }
+        a = anew;
     }
-    ret_thrust = 0;//DtDr*blade_length;
-    ret_torque = DqDr*blade_length;
+    angle = alpha > 0 ? phi : M_PI-pi;
+    ret_thrust = v2 > M_PI/2 ? -DtDr*blade_length: DtDr*blade_length;//DtDr*blade_length;
+    ret_torque = v2 > M_PI/2 ? -DtDr*blade_length: DtDr*blade_length;
 
     //cout << ret_thrust << " " << ret_torque << endl << endl;
 }
