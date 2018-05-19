@@ -3,7 +3,7 @@
 #include <fstream>
 #include <math.h>
 #include "output/quadcoptereqns.h"
-#include <specifieds.h>
+#include <specifieds.h.backup>
 
 #define SQ(x) ((x)*(x))
 
@@ -20,31 +20,37 @@ Matrix<double,37,1> compute_xdot(Matrix<double,37,1> states, Matrix<double,4,1> 
     return mm.llt().solve(fo);;
 }
 
+void wrap_2pi(double& x) {
+    if (x >= 2*M_PI) {
+        x -= 2*M_PI;
+    } else if (x < 0) {
+        x += 2*M_PI;
+    }
+}
+
 int main() {
     states << 0, 0, 0, 1, // quat 0 1 2 3
               0, 0, 0, // pos 4 5 6
               0, 0, 0, 0, // motor angle 7 8 9 10
               0, 0, 0, 0, 0, 0, 0, 0, //blade angle 11 12 13 14 15 16 17 18
               0, 0, 0, // ang vel 19 20 21
-              0, 0, 0.001, // vel 22 23 24
-              -600, -600, -600, -600, //motor ang vel 25 26 27 28
+              0, 0, 0.01, // vel 22 23 24
+              380, 380, 380, 380, //motor ang vel 25 26 27 28
               0, 0, 0, 0, 0, 0, 0, 0; // blade ang vel 29 30 31 32 33 34 35 36
 
-    inputs << 0, 
-              0, 
-              0, 
-              0; // motor voltage
+
+    inputs << 9.4, 
+              9.4, 
+              9.4, 
+              9.4; // motor voltage
 
     double t = 0;
     ofstream datafile("data.txt");
-
-    cout << get_blade_torque(0.001,761.843) << endl;
-    cout << get_blade_torque(-0.5,100) << endl;
-
-    for (int a=0; a<0; a++) {
+    get_blade_thrust(0.1, 50);
+    for (int a=0; a<10; a++) {
         Matrix<double,37,1> xdot;
-        for (int i=0; i<100; i++) {
-            double dt = 0.0001;
+        for (int i=0; i<1000; i++) {
+            double dt = 0.001;
             t += dt;
 
             xdot = compute_xdot(states,inputs);
@@ -68,7 +74,13 @@ int main() {
             states(1,0) /= norm;
             states(2,0) /= norm;
             states(3,0) /= norm;
+
+            wrap_2pi(states(7,0));
+            wrap_2pi(states(8,0));
+            wrap_2pi(states(9,0));
+            wrap_2pi(states(10,0));
         }
+
 
         cout << "xdot:" << endl << xdot << endl << endl;
 

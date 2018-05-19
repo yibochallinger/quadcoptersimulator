@@ -1,8 +1,10 @@
 constants = {
-	'g':0., #m/s^2
+	'g':9.80655, #m/s^2
 	#'k':1,  #thrust coefficient
-	'Km':.024, #motor constant
-	'R':.2, #ohm
+	'Km':.0335, #motor constant
+	'R':.07, #ohm
+	'lambda_m': 0.00276,
+	'N_P': 7,
 	'k_theta':51.8, #stiffness
 
 	#body dimension
@@ -16,7 +18,7 @@ constants = {
 	'blade_mass':.021, #kg
 	'blade_width':.02, #m 
 	'blade_length':.23, #m 
-	'pitch':.15, #m
+	'pitch':.23, #m
 	'rho':1.225, #kg/m^3
 	'Cd':.01	
 }

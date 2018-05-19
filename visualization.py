@@ -24,7 +24,6 @@ for i in range(4):
 	motor_viz_frame.append(VisualizationFrame(N, motor_masscenter[i], motor_shape))
 	arm_center.append(Point('a_c[%u]' % (i,)))
 	arm_center[i].set_pos(body_masscenter, body_arm / 2. * motorloc[i])
-	#arm_viz_frame.append(VisualizationFrame('arm[%u]' % (i,), body_frame, arm_center[i], arm_shape))
 	arm_viz_frame.append(VisualizationFrame('arm[%u]' % (i,), body_frame.orientnew('arm%u'%(i,), 'Axis', [arm_angles[i],body_frame.z]), arm_center[i], arm_shape))
 for i in range(4):
 	for j in range(2):

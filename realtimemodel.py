@@ -110,14 +110,16 @@ motor_body =[]
 motorloc = [1/np.sqrt(2)*(body_frame.x+body_frame.y), -1/np.sqrt(2)*(body_frame.x+body_frame.y), 1/np.sqrt(2)*(body_frame.x-body_frame.y), 1/np.sqrt(2)*(-body_frame.x+body_frame.y)]
 direction = [-1, -1, 1, 1]
 
+
 for i in range (4):
     motor_frame.append(body_frame.orientnew('motor_frame[%u]' % (i,), 'Axis', [direction[i]*motor_theta[i], body_frame.z]))
     motor_inertia.append(inertia(motor_frame[i], 0.000031,  0.000031, 0.000063))
     motor_masscenter.append(body_masscenter.locatenew('motor_masscenter[%u]' % (i,), body_arm*motorloc[i]))
     motor_masscenter[i].v2pt_theory(body_masscenter, N, body_frame)
     motor_body.append(RigidBody('motor_body[%u]' % (i,), motor_masscenter[i], motor_frame[i], motor_mass, (motor_inertia[i], motor_masscenter[i])))
-    forces.append((motor_frame[i], direction[i]*(motor_voltage[i]-Km*motor_omega[i])*Km/R*motor_frame[i].z))  #motor torque
-    forces.append((body_frame, -direction[i]*(motor_voltage[i]-Km*motor_omega[i])*Km/R*motor_frame[i].z))  #body reaction
+    motor_torque = Rational(3,2)*N_P*(lambda_m*((motor_voltage[i]/sqrt(3)-motor_omega[i]*7*lambda_m)/R))
+    forces.append((motor_frame[i], direction[i]*motor_torque*motor_frame[i].z))  #motor torque
+    forces.append((body_frame, -direction[i]*motor_torque*motor_frame[i].z))  #body reaction
     forces.append((motor_masscenter[i], motor_mass*gravity))
     bodies.append(motor_body[i])
     kdes.append(motor_omega[i]-motor_theta_dot[i])
