@@ -4,6 +4,8 @@
 #include <iostream>
 using namespace std;
 
+
+
 static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_thrust, double& ret_torque) {
 
     //cout << v_z << " " << v2 << endl;
@@ -18,7 +20,9 @@ static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_th
 
     double CL_alpha = 2*M_PI;
     double cl = CL_alpha * alpha;
-    double cd = .008-.003*cl+.01*pow(cl,2);
+    double clcd_alpha = 266;
+    double cd = cl/clcd_alpha;
+    //cout << cd/cl << endl;
     //local velocity at blade
     double vlocal_sq = pow(v_z,2)+pow(v2,2);
 

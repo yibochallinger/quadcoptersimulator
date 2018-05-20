@@ -6,9 +6,10 @@ constants = {
 	'lambda_m': 0.00276,
 	'N_P': 7,
 	'k_theta':51.8, #stiffness
+	'blade_c': 0,
 
 	#body dimension
-	'body_mass':2.6,  #kg
+	'body_mass':2.8,  #kg
 	'body_arm':.36,   #m
 	#'body_thickness':.1, #m
 

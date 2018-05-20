@@ -21,7 +21,7 @@ static inline void get_blade_thrust_torque(double v_z, double v2, double& ret_th
         double v0 = v_z * (1+a);            
         double phi = atan2(fabs(v0),fabs(v2));
         //cout << phi << endl;
-        double alpha =  v_z > 0 ? theta-phi: theta+phi;
+        double alpha =  v_0  > 0 ? theta-phi: theta+phi;
 
         double CL_alpha = 2 * M_PI;
         double cl = CL_alpha * alpha;

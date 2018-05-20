@@ -151,14 +151,17 @@ for i in range(4):
         force_center[2*i+j].v2pt_theory(blade_masscenter[-1], N, blade_frame[-1])
         blade_tip.append(motor_masscenter[i].locatenew('blade_tip[%u]' % (2*i+j,), blade_length*blade_frame[2*i+j].y))
         blade_tip[2*i+j].v2pt_theory(blade_masscenter[-1], N, blade_frame[-1])
-        blade_v_z.append(force_center[i].vel(N).to_matrix(blade_frame[i])[2])
-        blade_v_2.append(force_center[i].vel(N).to_matrix(blade_frame[i])[0])
+        blade_v_z.append(force_center[-1].vel(N).to_matrix(blade_frame[-1])[2])
+        blade_v_2.append(force_center[-1].vel(N).to_matrix(blade_frame[-1])[0])
         blade_thrust.append(Function('get_blade_thrust')(blade_v_z[-1], blade_v_2[-1]))
         blade_torque.append(Function('get_blade_torque')(blade_v_z[-1], blade_v_2[-1]))
 
         forces.append((force_center[2*i+j], -blade_thrust[-1]*blade_frame[2*i+j].z))  #thrust on blades
         forces.append((blade_frame[2*i+j], -direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #blade stiffness torque
+        forces.append((blade_frame[2*i+j], -direction[i]*blade_c*blade_omega[2*i+j]*blade_frame[2*i+j].x))  #blade damping
         forces.append((motor_frame[i], direction[i]*k_theta*blade_theta[2*i+j]*blade_frame[2*i+j].x)) #reaction torque of blade stiffness
+        forces.append((motor_frame[i], direction[i]*blade_c*blade_omega[2*i+j]*blade_frame[2*i+j].x))  #reaction torque of blade damping
+
         forces.append((blade_frame[2*i+j], direction[i]*blade_torque[-1]*blade_frame[2*i+j].z)) #torque on blades
         forces.append((blade_masscenter[2*i+j], blade_mass*gravity))
         bodies.append(blade_body[2*i+j])

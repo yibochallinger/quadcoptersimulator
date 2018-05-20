@@ -60,7 +60,7 @@ with open('output/quadcoptereqns.h', 'wb') as f:
 with open('output/quadcoptereqns.cpp', 'wb') as f:
     f.truncate()
     f.write('#include \"quadcoptereqns.h\"\n')
-    f.write('#include <specifieds.h.backup>\n\n')
+    f.write('#include <specifieds.h>\n\n')
     f.write(generate_eigen_matrix_func('get_mm', derivation['subx'], derivation['mm'], [('states',derivation['states']), ('inputs',derivation['inputs'])]))
     f.write('\n\n')
     f.write(generate_eigen_matrix_func('get_fo', derivation['subx'], derivation['fo'], [('states',derivation['states']), ('inputs',derivation['inputs'])]))
